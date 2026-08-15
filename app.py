@@ -1,11 +1,11 @@
-import os
+ximport os
 from flask import Flask, render_template, request, jsonify
 from openai import AzureOpenAI
 
 app = Flask(__name__)
 
 # Configure your Azure OpenAI credentials
-endpoint = "https://ppallavi1978-8495-resource.services.ai.azure.com/"
+endpoint = "https://ppallavi1978-8495-resource.cognitiveservices.azure.com/openai/deployments/gpt-image-2/images/generations?api-version=2025-04-01-preview"
 api_version = "2025-04-01-preview"
 deployment = "gpt-image-2"
 api_key = "2L75WNfiVC4BBiU3LihlHOza2xsDEcZRga1vBHUfNaYJeT5uwX8zJQQJ99CEACHYHv6XJ3w3AAAAACOGQcAT"
@@ -54,6 +54,8 @@ def generate():
             return jsonify({"error": "Failed to retrieve image data from response."}), 500
 
     except Exception as e:
+        # Print the exact exception to your terminal console for troubleshooting
+        print("EXCEPTION OCCURRED:", str(e))
         return jsonify({"error": str(e)}), 500
 
 def render_index():
