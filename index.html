@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            resize: none;
+            font-size: 16px;
+        }
+        button {
+            background-color: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005a9e;
+        }
+        #loading {
+            display: none;
+            margin-top: 20px;
+            color: #555;
+        }
+        #result-container {
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>AI Image Generator</h2>
+        <textarea id="promptInput" placeholder="Enter your image prompt here... (e.g., A futuristic city at sunset)"></textarea>
+        <br>
+        <button onclick="generateImage()">Generate Image</button>
+        
+        <div id="loading">Generating image, please wait...</div>
+        
+        <div id="result-container"></div>
+    </div>
+
+    <script>
+        async function generateImage() {
+            const prompt = document.getElementById("promptInput").value;
+            const loadingDiv = document.getElementById("loading");
+            const resultContainer = document.getElementById("result-container");
+
+            if (!prompt.trim()) {
+                alert("Please enter a prompt!");
+                return;
+            }
+
+            loadingDiv.style.display = "block";
+            resultContainer.innerHTML = "";
+
+            try {
+                const response = await fetch("/generate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                const data = await response.json();
+                loadingDiv.style.display = "none";
+
+                if (response.ok) {
+                    resultContainer.innerHTML = `<img src="${data.image_url}" alt="Generated Image">`;
+                } else {
+                    resultContainer.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                loadingDiv.style.display = "none";
+                resultContainer.innerHTML = `<p style="color: red;">An unexpected error occurred.</p>`;
+            }
+        }
+    </script>
+
+</body>
+</html>
